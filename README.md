@@ -1,124 +1,68 @@
-<!--
-README TEMPLATE (Clean + modern)
-How to use:
-1) Copy everything into README.md
-2) Delete the sections you don’t need
-3) Replace anything inside: <...>
-Tip: Keep it short. Move long docs to /docs and link them.
--->
+# Tara Programming Language
 
-<!-- =========================
-HEADER
-========================= -->
+**Tara is a strict, multi-paradigm programming language focused on explicit structure, predictable semantics, and deterministic execution.**  
+Tara programs run on the **Tara Virtual Machine (TVM)**, a portable bytecode runtime designed for clarity, control, and extensibility.
 
-<div align="center">
+Tara’s design philosophy emphasizes:
 
-<!-- Optional: project logo -->
-<!-- <img src="assets/logo.png" alt="<PROJECT_NAME> logo" width="120" /> -->
+- Explicit behavior over implicit magic  
+- Deterministic execution semantics  
+- Strict type rules  
+- Structured state and action composition  
+- Diagnostic clarity as a first-class concern  
 
-<h1><PROJECT_NAME></h1>
-
-<p>
-  <b><ONE_LINE_TAGLINE></b><br/>
-  <sub><SHORT_SECOND_LINE_OPTIONAL></sub>
-</p>
-
-<!-- Badges: pick what you actually have (build, coverage, license, version, downloads, etc.) -->
-<p>
-  <!-- Example badges (replace links with your repo/workflows) -->
-  <!--
-  <a href="https://github.com/<ORG>/<REPO>/actions/workflows/ci.yml">
-    <img alt="CI" src="https://img.shields.io/github/actions/workflow/status/<ORG>/<REPO>/ci.yml?branch=main" />
-  </a>
-  <a href="https://codecov.io/gh/<ORG>/<REPO>">
-    <img alt="Coverage" src="https://img.shields.io/codecov/c/github/<ORG>/<REPO>" />
-  </a>
-  <a href="LICENSE">
-    <img alt="License" src="https://img.shields.io/github/license/<ORG>/<REPO>" />
-  </a>
-  <a href="https://github.com/<ORG>/<REPO>/releases">
-    <img alt="Release" src="https://img.shields.io/github/v/release/<ORG>/<REPO>" />
-  </a>
-  -->
-</p>
-
-<!-- Quick links -->
-<p>
-  <a href="#-features">Features</a> •
-  <a href="#-installation">Installation</a> •
-  <a href="#-usage">Usage</a> •
-  <a href="#-documentation">Docs</a> •
-  <a href="#-contributing">Contributing</a> •
-  <a href="#-license">License</a>
-</p>
-
-</div>
+Tara is currently in active development.
 
 ---
 
-<!-- =========================
-OVERVIEW
-========================= -->
+# Progress
 
-## Overview
+The Tara project is being developed incrementally, starting from core language infrastructure and runtime systems.
 
-<1–3 sentences: what it does, who it’s for, why it exists.>
+| Component | Progress |
+|----------|----------|
+| Lexer | 0% |
+| Parser | 0% |
+| Abstract Syntax Tree (AST) | 0% |
+| Interpreter | 0% |
+| Bytecode Format | 0% |
+| Tara Virtual Machine (TVM) | 0% |
+| Compiler | 0% |
+| Standard Library | 0% |
+| Module System | 0% |
+| Type System | 0% |
+| Error Diagnostics | 0% |
+| Optimizer | 0% |
+| JIT Compilation | 0% |
+| Tooling (CLI / Formatter / LSP) | 0% |
 
-<!-- Optional: add a screenshot/GIF -->
-<!--
-![Demo](assets/demo.png)
--->
+---
 
-<!-- =========================
-FEATURES
-========================= -->
+# Project Status
 
-## ✨ Features
+Tara is in the early design and prototyping phase.  
+Core language specifications, architecture decisions, and runtime models are actively being defined.
 
-- <Feature 1 — short and specific>
-- <Feature 2>
-- <Feature 3>
+---
 
-<!-- Optional: define non-goals to reduce issues/feature requests -->
-<!--
-### Non-goals
-- <What you intentionally won’t support>
--->
+# Vision
 
-<!-- =========================
-STATUS / ROADMAP
-========================= -->
+Tara aims to explore alternative design choices in:
 
-## 🧭 Project status
+- Language strictness and predictability  
+- Execution semantics  
+- Runtime architecture  
+- Resource and memory management strategies  
+- Structured program composition  
 
-- **Stability:** <Experimental | Beta | Stable>
-- **API:** <Breaking changes possible | Mostly stable | Stable>
-- **Support:** <Community | Maintainers | Company-backed>
+---
 
-<!-- Optional mini roadmap (keep it realistic) -->
-<!--
-### Roadmap
-- [ ] <Milestone 1>
-- [ ] <Milestone 2>
-- [ ] <Milestone 3>
--->
+# Contributing
 
-<!-- =========================
-REQUIREMENTS
-========================= -->
+Contribution guidelines and development documentation will be added as the project infrastructure stabilizes.
 
-## ✅ Requirements
+---
 
-- <Runtime / language version (e.g., Node 20+, Python 3.11+, Go 1.22+)>
-- <OS support (Linux/macOS/Windows)>
-- <Other dependencies>
+# License
 
-<!-- =========================
-INSTALLATION
-========================= -->
-
-## 📦 Installation
-
-### Option A: <Recommended method>
-```bash
-<install command>
+License information will be defined in future revisions.

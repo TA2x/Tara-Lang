@@ -218,12 +218,14 @@ impl<'a> Lexer<'a> {
     }
 }
 
-fn kind_to_lexeme(token_type: &TokenType, char_list: &[char], cursor: usize) -> String {
+fn token_type_to_lexeme(token_type: &TokenType, char_list: &[char], cursor: usize) -> String {
     match token_type {
         TokenKind::Integer(n)    => n.to_string(),
         TokenKind::Float(f)      => f.to_string(),
         TokenKind::Identifier(s) => s.clone(),
         TokenKind::Let           => "let".to_string(),
+        TokenKind::While         => "while".to_string(),
+        TokenKind::For           => "for".to_string(),
         TokenKind::Func          => "fn".to_string(),
         TokenKind::If            => "if".to_string(),
         TokenKind::Else          => "else".to_string(),
@@ -232,12 +234,12 @@ fn kind_to_lexeme(token_type: &TokenType, char_list: &[char], cursor: usize) -> 
         TokenKind::Minus         => "-".to_string(),
         TokenKind::Star          => "*".to_string(),
         TokenKind::Slash         => "/".to_string(),
-        TokenKind::Equals        => "=".to_string(),
-        TokenKind::DoubleEquals  => "==".to_string(),
-        TokenKind::Bang          => "!".to_string(),
-        TokenKind::BangEquals    => "!=".to_string(),
-        TokenKind::LessThan      => "<".to_string(),
-        TokenKind::GreaterThan   => ">".to_string(),
+        TokenKind::Equal         => "=".to_string(),
+        TokenKind::DoubleEqual   => "==".to_string(),
+        TokenKind::Not           => "!".to_string(),
+        TokenKind::NotEqual      => "!=".to_string(),
+        TokenKind::Less          => "<".to_string(),
+        TokenKind::Greater       => ">".to_string(),
         TokenKind::LeftParen     => "(".to_string(),
         TokenKind::RightParen    => ")".to_string(),
         TokenKind::LeftBrace     => "{".to_string(),
@@ -245,7 +247,7 @@ fn kind_to_lexeme(token_type: &TokenType, char_list: &[char], cursor: usize) -> 
         TokenKind::Semicolon     => ";".to_string(),
         TokenKind::Colon         => ":".to_string(),
         TokenKind::Comma         => ",".to_string(),
-        TokenKind::Eof           => "\0".to_string(),
+        TokenKind::EOF           => "\0".to_string(),
         TokenKind::Unknown(c)    => c.to_string(),
     }
 }

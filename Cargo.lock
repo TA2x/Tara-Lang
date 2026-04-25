@@ -3,5 +3,5 @@
 version = 4
 
 [[package]]
-name = "TuffRust"
+name = "my_lexer"
 version = "0.1.0"

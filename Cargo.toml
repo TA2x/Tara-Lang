@@ -1,6 +1,9 @@
 [package]
-name = "TuffRust"
+name    = "my_lexer"
 version = "0.1.0"
-edition = "2024"
+edition = "2021"
 
-[dependencies]
+# Inline assembly requires nightly, OR you can use stable with
+# `core::arch::asm!` which is stable since Rust 1.59.
+[profile.release]
+opt-level = 3

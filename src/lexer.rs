@@ -1,4 +1,4 @@
-use crate::token::{Token, TokenType};
+use crate::{asm_helpers::{is_digit_asm, is_alpha_asm}, token::{Token, TokenType}};
 
 pub struct Lexer<'a> {
     source: &'a str, //full source code as a string **borrowed**
@@ -22,8 +22,8 @@ impl<'a> Lexer<'a> {
     pub fn next_token(&mut self) -> Token {
         self.skip_whitespace();
 
-        let token_line = self.current_line;
-        let token_column = self.current_column;
+        let token_line = self.line;
+        let token_column = self.column;
 
         let token_type = match self.peek(){
             None => TokenType::EOF,
@@ -127,7 +127,7 @@ impl<'a> Lexer<'a> {
             .collect::<String>()
             .len()
         );
-        let lexeme = type_to_lexeme(&token_type, &self.char_list, self.cursor);
+        let lexeme = token_type_to_lexeme(&token_type, &self.char_list, self.cursor);
 
         Token::new(token_type, lexeme, token_line, token_column)
     }
@@ -220,34 +220,36 @@ impl<'a> Lexer<'a> {
 
 fn token_type_to_lexeme(token_type: &TokenType, char_list: &[char], cursor: usize) -> String {
     match token_type {
-        TokenKind::Integer(n)    => n.to_string(),
-        TokenKind::Float(f)      => f.to_string(),
-        TokenKind::Identifier(s) => s.clone(),
-        TokenKind::Let           => "let".to_string(),
-        TokenKind::While         => "while".to_string(),
-        TokenKind::For           => "for".to_string(),
-        TokenKind::Func          => "fn".to_string(),
-        TokenKind::If            => "if".to_string(),
-        TokenKind::Else          => "else".to_string(),
-        TokenKind::Return        => "return".to_string(),
-        TokenKind::Plus          => "+".to_string(),
-        TokenKind::Minus         => "-".to_string(),
-        TokenKind::Star          => "*".to_string(),
-        TokenKind::Slash         => "/".to_string(),
-        TokenKind::Equal         => "=".to_string(),
-        TokenKind::DoubleEqual   => "==".to_string(),
-        TokenKind::Not           => "!".to_string(),
-        TokenKind::NotEqual      => "!=".to_string(),
-        TokenKind::Less          => "<".to_string(),
-        TokenKind::Greater       => ">".to_string(),
-        TokenKind::LeftParen     => "(".to_string(),
-        TokenKind::RightParen    => ")".to_string(),
-        TokenKind::LeftBrace     => "{".to_string(),
-        TokenKind::RightBrace    => "}".to_string(),
-        TokenKind::Semicolon     => ";".to_string(),
-        TokenKind::Colon         => ":".to_string(),
-        TokenKind::Comma         => ",".to_string(),
-        TokenKind::EOF           => "\0".to_string(),
-        TokenKind::Unknown(c)    => c.to_string(),
+        TokenType::Integer(n)    => n.to_string(),
+        TokenType::Float(f)      => f.to_string(),
+        TokenType::Identifier(s) => s.clone(),
+        TokenType::Let           => "let".to_string(),
+        TokenType::While         => "while".to_string(),
+        TokenType::For           => "for".to_string(),
+        TokenType::Func          => "fn".to_string(),
+        TokenType::If            => "if".to_string(),
+        TokenType::Else          => "else".to_string(),
+        TokenType::Return        => "return".to_string(),
+        TokenType::Plus          => "+".to_string(),
+        TokenType::Minus         => "-".to_string(),
+        TokenType::Star          => "*".to_string(),
+        TokenType::Slash         => "/".to_string(),
+        TokenType::Equal         => "=".to_string(),
+        TokenType::DoubleEqual   => "==".to_string(),
+        TokenType::Not           => "!".to_string(),
+        TokenType::NotEqual      => "!=".to_string(),
+        TokenType::Less          => "<".to_string(),
+        TokenType::Greater       => ">".to_string(),
+        TokenType::LeftParen     => "(".to_string(),
+        TokenType::RightParen    => ")".to_string(),
+        TokenType::LeftBrace     => "{".to_string(),
+        TokenType::RightBrace    => "}".to_string(),
+        TokenType::Semicolon     => ";".to_string(),
+        TokenType::Colon         => ":".to_string(),
+        TokenType::Comma         => ",".to_string(),
+        TokenType::LessEqual     => "<=".to_string(),
+        TokenType::GreaterEqual  => ">=".to_string(),
+        TokenType::EOF           => "\0".to_string(),
+        TokenType::Unknown(c)    => c.to_string(),
     }
 }

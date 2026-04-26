@@ -65,4 +65,4 @@ Contribution guidelines and development documentation will be added as the proje
 
 # License
 
-License information will be defined in future revisions.
+GNU General Public License v3.0

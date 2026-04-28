@@ -1,6 +1,7 @@
 mod token;
 mod lexer;
 mod asm_helpers;
+mod Parser;
 
 use lexer::Lexer;
 use token::TokenType;

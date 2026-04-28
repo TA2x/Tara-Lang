@@ -21,8 +21,8 @@ The Tara project is being developed incrementally, starting from core language i
 
 | Component | Progress |
 |----------|----------|
-| Lexer | 90% |
-| Parser | 0% |
+| Lexer | 85% |
+| Parser | 12% |
 | Abstract Syntax Tree (AST) | 0% |
 | Interpreter | 0% |
 | Bytecode Format | 0% |

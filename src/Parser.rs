@@ -29,5 +29,5 @@ impl std:fmt::Display for ParseError {
 
 pub struct Parser {
     token_list: Vec<Token>,
-    
+    cursor: usize,
 }

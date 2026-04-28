@@ -31,3 +31,23 @@ pub struct Parser {
     token_list: Vec<Token>,
     cursor: usize,
 }
+
+impl Parser {
+    pub fn new(token_list: Vec<Token>) -> Self {
+        Self {
+            token_list,
+            cursor: 0,
+        }
+    }
+
+    pub fn parse_program(&mut self) -> Result<Program, ParseError> {
+        let mut program = Program::new();
+
+        while !self.is_at_end() {
+            let statement = self.parse_statement()?;
+            program.statements.push(statement);
+        }
+
+        Ok(Program)
+    }
+}

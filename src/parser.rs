@@ -427,6 +427,7 @@ impl Parser {
     fn is_at_end(&self) -> bool {
         matches!(self.peek_type(), TokenType::EOF)
     }
+
 }
 
 fn token_type_display(token_type: &TokenType) -> &'static str {

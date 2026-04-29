@@ -11,7 +11,7 @@ pub struct ParseError {
 impl ParseError{
     fn new(message: impl Into<String>, line: usize, column: usize) -> Self {
         Self {
-            message: message.Into(),
+            message: message.into(),
             line,
             column,
         }
@@ -48,7 +48,7 @@ impl Parser {
             program.statements.push(statement);
         }
 
-        Ok(Program)
+        Ok(program)
     }
 
     fn parse_statement(&mut self) -> Result<Stmt, ParseError> {
@@ -81,7 +81,7 @@ impl Parser {
     }
 
     fn parse_return(&mut self) -> Result<Stmt, ParseError> {
-        slef.expect(TokenType::Return)?;
+        self.expect(TokenType::Return)?;
 
         let return_value = if self.check(TokenType::Semicolon) {
             None
@@ -96,15 +96,15 @@ impl Parser {
 
     fn parse_if_else(&mut self) -> Result<Stmt, ParseError> {
         self.expect(TokenType::If)?;
-
         self.expect(TokenType::LeftParen)?;
         let condition = self.parse_expression()?;
         self.expect(TokenType::RightParen)?;
 
-        let then_branch = Box::new(self.parse_statement()?);
+        let then_branch = self.parse_block()?;
 
-        let else_branch = if self.match_token(TokenType::Else) {
-            Some(Box::new(self.parse_statement()?))
+        let else_branch = if self.check(TokenType::Else) {
+            self.advance();
+            Some(self.parse_block()?)
         } else {
             None
         };
@@ -195,8 +195,8 @@ impl Parser {
 
         loop {
             let operator = match self.peek_type() {
-                TokenType::EqualEqual => BinaryOperator::EqualEqual,
-                TokenType::BangEqual => BinaryOperator::BangEqual,
+                TokenType::DoubleEqual => BinaryOperator::DoubleEqual,
+                TokenType::NotEqual => BinaryOperator::NotEqual,
                 TokenType::Less => BinaryOperator::Less,
                 TokenType::LessEqual => BinaryOperator::LessEqual,
                 TokenType::Greater => BinaryOperator::Greater,
@@ -380,7 +380,7 @@ impl Parser {
         }
     }
 
-    fn expect(&mut self, expected_type: TokenType) -> Result<(), ParseError> {
+    fn expect(&mut self, expected_type: TokenType) -> Result<Token, ParseError> {
         if self.check(expected_type.clone()) {
             Ok(self.advance().unwrap())
         } else {
@@ -426,5 +426,38 @@ impl Parser {
 
     fn is_at_end(&self) -> bool {
         matches!(self.peek_type(), TokenType::EOF)
+    }
+}
+
+fn token_type_display(token_type: &TokenType) -> &'static str {
+    match token_type {
+        TokenType::Let          => "let",
+        TokenType::If           => "if",
+        TokenType::Else         => "else",
+        TokenType::While        => "while",
+        TokenType::For          => "for",
+        TokenType::Return       => "return",
+        TokenType::Func         => "func",
+        TokenType::Plus         => "+",
+        TokenType::Minus        => "-",
+        TokenType::Star         => "*",
+        TokenType::Slash        => "/",
+        TokenType::Equal        => "=",
+        TokenType::DoubleEqual  => "==",
+        TokenType::Not          => "!",
+        TokenType::NotEqual     => "!=",
+        TokenType::Less         => "<",
+        TokenType::LessEqual    => "<=",
+        TokenType::Greater      => ">",
+        TokenType::GreaterEqual => ">=",
+        TokenType::LeftParen    => "(",
+        TokenType::RightParen   => ")",
+        TokenType::LeftBrace    => "{",
+        TokenType::RightBrace   => "}",
+        TokenType::Semicolon    => ";",
+        TokenType::Colon        => ":",
+        TokenType::Comma        => ",",
+        TokenType::EOF          => "<EOF>",
+        _                       => "<token>",
     }
 }

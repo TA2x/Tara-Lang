@@ -166,11 +166,122 @@ fn parse_func_def(&mut self) -> Result<Stmt, ParseError> {
         body,
     })
 
+
     fn parse_expression_stmt(&mut self) -> Result<Stmt, ParseError> {
         let expression = self.parse_expression()?;
         self.expect(TokenType::Semicolon)?;
         Ok(Stmt::Expression {expression })
     }
 
-    //Work on the block helper when you comeback :3
+    fn parse_block(&mut self) -> Result<Vec<Stmt>, ParseError> {
+        self.expect(TokenType::LeftBrace)?;
+
+        let mut statements: Vec<Stmt> = Vec::new();
+
+        while !self.check(TokenType::RightBrace) && !self.is_at_end() {
+            statements.push(self.parse_statement()?);
+        }
+
+        self.expect(TokenType::RightBrace)?;
+
+        Ok(statements)
+    }
+
+    fn parse_expression(&mut self) -> Result<Expr, ParseError> {
+        self.parse_comparison()
+    }
+
+    fn parse_comparison(&mut self) -> Result<Expr, ParseError> {
+        let mut left = self.parse_additive()?;
+
+        loop {
+            let operator = match self.peek_type() {
+                TokenType::EqualEqual => BinaryOperator::EqualEqual,
+                TokenType::BangEqual => BinaryOperator::BangEqual,
+                TokenType::Less => BinaryOperator::Less,
+                TokenType::LessEqual => BinaryOperator::LessEqual,
+                TokenType::Greater => BinaryOperator::Greater,
+                TokenType::GreaterEqual => BinaryOperator::GreaterEqual,
+                _ => break,
+            };
+
+            self.advance();
+
+            let right = self.parse_additive()?;
+
+            left = Expr::BinaryOp {
+                left_operand: Box::new(left),
+                operator,
+                right_operand: Box::new(right),
+            };
+        }
+        Ok(left)
+    }
+
+    fn parse_additive(&mut self) -> Result<Expr, ParseError> {
+        let mut left = self.parse_multiplicative()?;
+
+        loop {
+            let operator = match self.peek_type() {
+                TokenType::Plus => BinaryOperator::Add,
+                TokenType::Minus => BinaryOperator::Subtract,
+                _ => break,
+            };
+
+            self.advance();
+
+            let right = self.parse_multiplicative()?;
+
+            left = Expr::BinaryOp {
+                left_operand: Box::new(left),
+                operator,
+                right_operand: Box::new(right),
+            };
+        }
+        Ok(left)
+    }
+
+    fn parse_multiplicative(&mut self) -> Result<Expr, ParseError> {
+        let mut left = self.parse_unary()?;
+
+        loop {
+            let operator = match self.peek_type() {
+                TokenType::Star => BinaryOperator::Multiply,
+                TokenType::Slash => BinaryOperator::Divide,
+                _ => break,
+            };
+
+            self.advance();
+
+            let right = self.parse_unary()?;
+
+            left = Expr::BinaryOp {
+                left_operand: Box::new(left),
+                operator,
+                right_operand: Box::new(right),
+            };
+        }
+        Ok(left)
+    }
+
+    fn parse_unary(&mut self) -> Result<Expr, ParseError> {
+        let operator = match self.peek_type() {
+            TokenType::Minus => Some(UnaryOperator::Negate),
+            TokenType::Not => Some(UnaryOperator::Not),
+            _ => None,
+        };
+        if let Some(unary_op) = operator {
+            self.advance();
+
+            let operand = self.parse_unary()?;
+
+            return Ok(Expr::UnaryOp {
+                operator: unary_op,
+                operand: Box::new(operand),
+            })
+        } else {
+            self.parse_primary()
+        }
+    }
 }
+

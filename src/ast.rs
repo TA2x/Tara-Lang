@@ -23,7 +23,7 @@ pub enum Expr {
     }
 }
 
-#[derive(Debug, Clonem PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum BinaryOperator {
     Add,
     Subtract,
@@ -31,6 +31,7 @@ pub enum BinaryOperator {
     Divide,
 
     Equal,
+    DoubleEqual,
     NotEqual,
     Less,
     Greater,
@@ -48,7 +49,7 @@ pub enum UnaryOperator {
 pub enum Stmt {
     LetBinding {
         name: String,
-        value: Expr,
+        initializer: Expr,
     },
 
     Return {
@@ -76,7 +77,7 @@ pub enum Stmt {
         body: Vec<Stmt>,
     },
 
-    Expression(Expr),
+    ExpressionStmt(Expr),
 }
 
 #[derive(Debug, Clone)]

@@ -123,7 +123,7 @@ impl Parser {
         let condition = self.parse_expression()?;
         self.expect(TokenType::RightParen)?;
 
-        let body = Box::new(self.parse_statement()?);
+        let body = self.parse_block()?;
 
         Ok(Stmt::WhileLoop { condition, body })
     }
@@ -169,7 +169,7 @@ impl Parser {
     fn parse_expression_stmt(&mut self) -> Result<Stmt, ParseError> {
         let expression = self.parse_expression()?;
         self.expect(TokenType::Semicolon)?;
-        Ok(Stmt::Expression {expression })
+        Ok(Stmt::ExpressionStmt(expression))
     }
 
     fn parse_block(&mut self) -> Result<Vec<Stmt>, ParseError> {
@@ -288,7 +288,7 @@ impl Parser {
             TokenType::Integer(_) => {
                 let consumed_token = self.advance().unwrap();
                 if let TokenType::Integer(numeric_value) = consumed_token.token_type {
-                    Ok(Expr::IntegerLiteral(numeric_value))
+                    Ok(Expr::Integer(numeric_value))
                 } else {
                     unreachable!("peek guaranteed Integer variant")
                 }
@@ -297,7 +297,7 @@ impl Parser {
             TokenType::Float(_) => {
                 let consumed_token = self.advance().unwrap();
                 if let TokenType::Float(numeric_value) = consumed_token.token_type {
-                    Ok(Expr::FloatLiteral(numeric_value))
+                    Ok(Expr::Float(numeric_value))
                 } else {
                     unreachable!("peek guaranteed Float variant")
                 }
@@ -331,7 +331,7 @@ impl Parser {
                         arguments,
                     })
                 } else {
-                    Ok(Expr::Variable(identifier_name))
+                    Ok(Expr::Identifier(identifier_name))
                 }
             }
 

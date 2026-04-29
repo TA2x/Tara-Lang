@@ -136,35 +136,34 @@ impl Parser {
         Ok(Stmt::ForLoop { body })
     }
 
-}
+    fn parse_func_def(&mut self) -> Result<Stmt, ParseError> {
+        self.expect(TokenType::Func)?;
 
-fn parse_func_def(&mut self) -> Result<Stmt, ParseError> {
-    self.expect(TokenType::Func)?;
+        let function_name = self.expect_identifier()?;
 
-    let function_name = self.expect_identifier()?;
+        self.expect(TokenType::LeftParen)?;
 
-    self.expect(TokenType::LeftParen)?;
+        let mut parameters_names: Vec<String> = Vec::new();
 
-    let mut parameters_names: Vec<String> = Vec::new();
-
-    if !self.check(TokenType::RightParen) {
-        parameters_names.push(self.expect_identifier()?);
-
-        while self.check(TokenType::Comma) {
-            self.advance();
+        if !self.check(TokenType::RightParen) {
             parameters_names.push(self.expect_identifier()?);
+
+            while self.check(TokenType::Comma) {
+                self.advance();
+                parameters_names.push(self.expect_identifier()?);
+            }
         }
+
+        self.expect(TokenType::RightParen)?;
+
+        let body = self.parse_block()?;
+
+        Ok(Stmt::FuncDef {
+            name: function_name,
+            parameters: parameters_names,
+            body,
+        })
     }
-
-    self.expect(TokenType::RightParen)?;
-
-    let body = self.parse_block()?;
-
-    Ok(Stmt::FuncDef {
-        name: function_name,
-        parameters: parameters_names,
-        body,
-    })
 
 
     fn parse_expression_stmt(&mut self) -> Result<Stmt, ParseError> {
@@ -278,10 +277,154 @@ fn parse_func_def(&mut self) -> Result<Stmt, ParseError> {
             return Ok(Expr::UnaryOp {
                 operator: unary_op,
                 operand: Box::new(operand),
-            })
-        } else {
-            self.parse_primary()
+            });
+        }
+        self.parse_primary()
+    }
+
+    fn parse_primary(&mut self) -> Result<Expr, ParseError> {
+
+        match self.peek_type() {
+            TokenType::Integer(_) => {
+                let consumed_token = self.advance().unwrap();
+                if let TokenType::Integer(numeric_value) = consumed_token.token_type {
+                    Ok(Expr::IntegerLiteral(numeric_value))
+                } else {
+                    unreachable!("peek guaranteed Integer variant")
+                }
+            }
+
+            TokenType::Float(_) => {
+                let consumed_token = self.advance().unwrap();
+                if let TokenType::Float(numeric_value) = consumed_token.token_type {
+                    Ok(Expr::FloatLiteral(numeric_value))
+                } else {
+                    unreachable!("peek guaranteed Float variant")
+                }
+            }
+
+            TokenType::Identifier(_) => {
+                let consumed_token = self.advance().unwrap();
+                let identifier_name = match consumed_token.token_type {
+                    TokenType::Identifier(name) => name,
+                    _ => unreachable!("peek guaranteed Identifier variant"),
+                };
+
+                if self.check(TokenType::LeftParen) {
+                    self.advance();
+
+                    let mut arguments: Vec<Expr> = Vec::new();
+
+                    if !self.check(TokenType::RightParen) {
+                        arguments.push(self.parse_expression()?);
+
+                        while self.check(TokenType::Comma) {
+                            self.advance();
+                            arguments.push(self.parse_expression()?);
+                        }
+                    }
+
+                    self.expect(TokenType::RightParen)?;
+
+                    Ok(Expr::Call {
+                        callee: identifier_name,
+                        arguments,
+                    })
+                } else {
+                    Ok(Expr::Variable(identifier_name))
+                }
+            }
+
+            TokenType::LeftParen => {
+                self.advance();
+                let inner_expr = self.parse_expression()?;
+                self.expect(TokenType::RightParen)?;
+                Ok(Expr::Grouped(Box::new(inner_expr)))
+            }
+
+            _ => {
+                let bad_token = self.current_token();
+                Err(ParseError::new(
+                    format!(
+                        "unexpected token '{}' - expected a literal, identifier, or '('",
+                        bad_token.lexeme
+                    ),
+                    bad_token.line,
+                    bad_token.column,
+                ))
+            }
         }
     }
-}
 
+    fn peek_type(&self) -> TokenType {
+        self.token_list
+            .get(self.cursor)
+            .map(|token| token.token_type.clone())
+            .unwrap_or(TokenType::EOF)
+    }
+
+    fn check(&self, expected_type: TokenType) -> bool {
+        std::mem::discriminant(&self.peek_type()) == std::mem::discriminant(&expected_type)
+    }
+
+    fn advance(&mut self) -> Option<Token> {
+        if self.cursor < self.token_list.len() {
+            let consumed = std::mem::replace(
+                &mut self.token_list[self.cursor],
+                Token::new(TokenType::EOF, "\0".to_string(), 0, 0),
+            );
+            self.cursor += 1;
+            Some(consumed)
+        } else {
+            None
+        }
+    }
+
+    fn expect(&mut self, expected_type: TokenType) -> Result<(), ParseError> {
+        if self.check(expected_type.clone()) {
+            Ok(self.advance().unwrap())
+        } else {
+            let bad_token = self.current_token();
+            Err(ParseError::new(
+                format!(
+                    "expected '{}' but found '{}'",
+                    token_type_display(&expected_type),
+                    bad_token.lexeme
+                ),
+                bad_token.line,
+                bad_token.column,
+            ))
+        }
+    }
+
+    fn expect_identifier(&mut self) -> Result<String, ParseError> {
+         if matches!(self.peek_type(), TokenType::Identifier(_)) {
+            let consumed = self.advance().unwrap();
+            match consumed.token_type {
+                TokenType::Identifier(name) => Ok(name),
+                _ => unreachable!("matches! guaranteed Identifier variant"),
+            }
+         } else {
+            let bad_token = self.current_token();
+            Err(ParseError::new(
+                format!(
+                    "expected identifier but found '{}'",
+                    bad_token.lexeme
+                ),
+                bad_token.line,
+                bad_token.column,
+            ))
+         }
+    }
+
+    fn current_token(&self) -> &Token {
+        self.token_list
+            .get(self.cursor)
+            .or_else(|| self.token_list.last())
+            .expect("token_list must not be empty - lexer always appends EOF")
+    }
+
+    fn is_at_end(&self) -> bool {
+        matches!(self.peek_type(), TokenType::EOF)
+    }
+}

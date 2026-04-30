@@ -40,7 +40,7 @@ The Tara project is being developed incrementally, starting from core language i
 
 # Project Status
 
-Tara is in the early design and prototyping phase.  
+Tara uses an Iterated development plan, thus it's being actively developed and refined.  
 Core language specifications, architecture decisions, and runtime models are actively being defined.
 
 ---

@@ -1,5 +1,7 @@
 # Tara Programming Language
 
+![Tara Language Logo](/Tara (Colored - Transparent background).svg)
+
 **Tara is a strict, multi-paradigm, general purpose programming language focused on explicit structure, predictable semantics, and deterministic execution.**  
 Tara programs run on the **Tara Virtual Machine (TVM)**, a portable bytecode runtime designed for clarity, control, and extensibility.
 

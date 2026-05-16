@@ -1,4 +1,4 @@
-![Tara Language Logo](/Tara-Lang-white-background.png)
+![Tara Language Logo](/TaraWholeName.svg)
 
 # Tara Programming Language
 

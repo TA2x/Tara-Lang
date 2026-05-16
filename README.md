@@ -1,4 +1,4 @@
-![Tara Language Logo](/TaraWholeName.svg)
+![Tara Language Logo](/TaraLogo.svg)
 
 # Tara Programming Language
 

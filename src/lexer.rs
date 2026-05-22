@@ -1,6 +1,7 @@
 use crate::{asm_helpers::{is_digit_asm, is_alpha_asm}, token::{Token, TokenType}};
 
 pub struct Lexer<'a> {
+    #[allow(dead_code)]
     source: &'a str, //full source code as a string **borrowed**
     char_list: Vec<char>, //list of characters from the source code in vector
     cursor: usize, //index of the next character to read
@@ -27,6 +28,8 @@ impl<'a> Lexer<'a> {
 
         let token_type = match self.peek(){
             None => TokenType::EOF,
+
+            Some('"') => self.scan_string(),
 
             Some('/') => {
                 self.advance();
@@ -121,7 +124,7 @@ impl<'a> Lexer<'a> {
             }
         };
 
-        let lexeme_start = self.cursor.saturating_sub(
+        let _lexeme_start = self.cursor.saturating_sub(
             self.char_list[..self.cursor]
             .iter()
             .collect::<String>()
@@ -176,6 +179,24 @@ impl<'a> Lexer<'a> {
         }
     }
 
+    fn scan_string(&mut self) -> TokenType {
+        self.advance(); // consume opening quote
+        let start = self.cursor;
+        
+        while let Some(ch) = self.peek() {
+            if ch == '"' {
+                let string_content: String = self.char_list[start..self.cursor].iter().collect();
+                self.advance(); // consume closing quote
+                return TokenType::String(string_content);
+            }
+            self.advance();
+        }
+        
+        // Unterminated string - return what we have as a string
+        let string_content: String = self.char_list[start..self.cursor].iter().collect();
+        TokenType::String(string_content)
+    }
+
     fn peek(&self) -> Option<char> {
         self.char_list.get(self.cursor).copied()
     }
@@ -218,10 +239,11 @@ impl<'a> Lexer<'a> {
     }
 }
 
-fn token_type_to_lexeme(token_type: &TokenType, char_list: &[char], cursor: usize) -> String {
+fn token_type_to_lexeme(token_type: &TokenType, _char_list: &[char], _cursor: usize) -> String {
     match token_type {
         TokenType::Integer(n)    => n.to_string(),
         TokenType::Float(f)      => f.to_string(),
+        TokenType::String(s)     => format!("\"{}\"", s),
         TokenType::Identifier(s) => s.clone(),
         TokenType::Let           => "let".to_string(),
         TokenType::While         => "while".to_string(),

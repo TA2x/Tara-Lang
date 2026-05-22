@@ -3,6 +3,7 @@ pub enum TokenType {
     Identifier(String),
     Integer(i64),
     Float(f64),
+    String(String),
     // keywords
     Let,
     If,

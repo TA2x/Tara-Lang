@@ -303,6 +303,15 @@ impl Parser {
                 }
             }
 
+            TokenType::String(_) => {
+                let consumed_token = self.advance().unwrap();
+                if let TokenType::String(string_value) = consumed_token.token_type {
+                    Ok(Expr::String(string_value))
+                } else {
+                    unreachable!("peek guaranteed String variant")
+                }
+            }
+
             TokenType::Identifier(_) => {
                 let consumed_token = self.advance().unwrap();
                 let identifier_name = match consumed_token.token_type {
@@ -459,6 +468,6 @@ fn token_type_display(token_type: &TokenType) -> &'static str {
         TokenType::Colon        => ":",
         TokenType::Comma        => ",",
         TokenType::EOF          => "<EOF>",
-        _                       => "<token>",
+        _ => "<token>",
     }
 }

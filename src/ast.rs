@@ -1,7 +1,9 @@
 #[derive(Debug, Clone)]
+#[allow(dead_code)]
 pub enum Expr {
     Integer(i64),
     Float(f64),
+    String(String),
     Identifier(String),
 
     BinaryOp {
@@ -24,6 +26,7 @@ pub enum Expr {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+#[allow(dead_code)]
 pub enum BinaryOperator {
     Add,
     Subtract,
@@ -40,12 +43,14 @@ pub enum BinaryOperator {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+#[allow(dead_code)]
 pub enum UnaryOperator {
     Negate, // For unary minus (arithmetic negation)
     Not,    // For logical NOT (boolean negation)
 }
 
 #[derive(Debug, Clone)]
+#[allow(dead_code)]
 pub enum Stmt {
     LetBinding {
         name: String,

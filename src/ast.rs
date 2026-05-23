@@ -6,6 +6,11 @@ pub enum Expr {
     String(String),
     Identifier(String),
 
+    Assignment {
+        name: String,
+        value: Box<Expr>,
+    },
+
     BinaryOp {
         left_operand: Box<Expr>,
         operator: BinaryOperator,
@@ -52,27 +57,34 @@ pub enum UnaryOperator {
 #[derive(Debug, Clone)]
 #[allow(dead_code)]
 pub enum Stmt {
-    LetBinding {
+    Make {
         name: String,
         initializer: Expr,
+    },
+
+    Show {
+        arguments: Vec<Expr>,
     },
 
     Return {
         value: Option<Expr>,
     },
 
-    IfElse {
+    When {
         condition: Expr,
         then_branch: Vec<Stmt>,
-        else_branch: Option<Vec<Stmt>>,
+        otherwise_branch: Option<Vec<Stmt>>,
     },
 
-    WhileLoop {
+    During {
         condition: Expr,
         body: Vec<Stmt>,
     },
 
-    ForLoop {
+    For {
+        init: Option<Box<Stmt>>,
+        condition: Option<Expr>,
+        update: Option<Box<Expr>>,
         body: Vec<Stmt>,
     },
 

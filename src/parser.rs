@@ -53,18 +53,19 @@ impl Parser {
 
     fn parse_statement(&mut self) -> Result<Stmt, ParseError> {
         match self.peek_type() {
-            TokenType::Let    => self.parse_let_binding(),
-            TokenType::Return => self.parse_return(),
-            TokenType::If     => self.parse_if_else(),
-            TokenType::While  => self.parse_while_loop(),
-            TokenType::For    => self.parse_for_loop(),
-            TokenType::Func   => self.parse_func_def(),
-            _                 => self.parse_expression_stmt(),
+            TokenType::Make    => self.parse_make(),
+            TokenType::Show    => self.parse_show(),
+            TokenType::Return  => self.parse_return(),
+            TokenType::When    => self.parse_when(),
+            TokenType::During  => self.parse_during(),
+            TokenType::For     => self.parse_for(),
+            TokenType::Func    => self.parse_func_def(),
+            _                  => self.parse_expression_stmt(),
         }
     }
 
-    fn parse_let_binding(&mut self) -> Result<Stmt, ParseError> {
-        self.expect(TokenType::Let)?;
+    fn parse_make(&mut self) -> Result<Stmt, ParseError> {
+        self.expect(TokenType::Make)?;
 
         let variable_name = self.expect_identifier()?;
 
@@ -72,12 +73,30 @@ impl Parser {
 
         let initializer = self.parse_expression()?;
 
-        self.expect(TokenType::Semicolon)?;
-
-        Ok(Stmt::LetBinding {
+        Ok(Stmt::Make {
             name: variable_name,
             initializer,
         })
+    }
+
+    fn parse_show(&mut self) -> Result<Stmt, ParseError> {
+        self.expect(TokenType::Show)?;
+        self.expect(TokenType::LeftParen)?;
+
+        let mut arguments = Vec::new();
+
+        if !self.check(TokenType::RightParen) {
+            arguments.push(self.parse_expression()?);
+
+            while self.check(TokenType::Comma) {
+                self.advance();
+                arguments.push(self.parse_expression()?);
+            }
+        }
+
+        self.expect(TokenType::RightParen)?;
+
+        Ok(Stmt::Show { arguments })
     }
 
     fn parse_return(&mut self) -> Result<Stmt, ParseError> {
@@ -94,30 +113,30 @@ impl Parser {
         Ok(Stmt::Return { value: return_value })
     }
 
-    fn parse_if_else(&mut self) -> Result<Stmt, ParseError> {
-        self.expect(TokenType::If)?;
+    fn parse_when(&mut self) -> Result<Stmt, ParseError> {
+        self.expect(TokenType::When)?;
         self.expect(TokenType::LeftParen)?;
         let condition = self.parse_expression()?;
         self.expect(TokenType::RightParen)?;
 
         let then_branch = self.parse_block()?;
 
-        let else_branch = if self.check(TokenType::Else) {
+        let otherwise_branch = if self.check(TokenType::Otherwise) {
             self.advance();
             Some(self.parse_block()?)
         } else {
             None
         };
 
-        Ok(Stmt::IfElse {
+        Ok(Stmt::When {
             condition,
             then_branch,
-            else_branch,
+            otherwise_branch,
         })
     }
 
-    fn parse_while_loop(&mut self) -> Result<Stmt, ParseError> {
-        self.expect(TokenType::While)?;
+    fn parse_during(&mut self) -> Result<Stmt, ParseError> {
+        self.expect(TokenType::During)?;
 
         self.expect(TokenType::LeftParen)?;
         let condition = self.parse_expression()?;
@@ -125,15 +144,57 @@ impl Parser {
 
         let body = self.parse_block()?;
 
-        Ok(Stmt::WhileLoop { condition, body })
+        Ok(Stmt::During { condition, body })
     }
 
-    fn parse_for_loop(&mut self) -> Result<Stmt, ParseError> {
+    fn parse_for(&mut self) -> Result<Stmt, ParseError> {
         self.expect(TokenType::For)?;
+        self.expect(TokenType::LeftParen)?;
+
+        // Parse init (optional make statement or empty)
+        let init = if self.check(TokenType::Make) {
+            let stmt = self.parse_make()?;
+            self.expect(TokenType::Semicolon)?;
+            Some(Box::new(stmt))
+        } else if self.check(TokenType::Semicolon) {
+            None
+        } else {
+            // Could be an expression followed by semicolon
+            let expr = self.parse_expression()?;
+            self.expect(TokenType::Semicolon)?;
+            Some(Box::new(Stmt::ExpressionStmt(expr)))
+        };
+
+        if !matches!(init, Some(_)) {
+            self.expect(TokenType::Semicolon)?;
+        }
+
+        // Parse condition (optional)
+        let condition = if self.check(TokenType::Semicolon) {
+            None
+        } else {
+            Some(self.parse_expression()?)
+        };
+
+        self.expect(TokenType::Semicolon)?;
+
+        // Parse update (optional)
+        let update = if self.check(TokenType::RightParen) {
+            None
+        } else {
+            Some(Box::new(self.parse_expression()?))
+        };
+
+        self.expect(TokenType::RightParen)?;
 
         let body = self.parse_block()?;
 
-        Ok(Stmt::ForLoop { body })
+        Ok(Stmt::For {
+            init,
+            condition,
+            update,
+            body,
+        })
     }
 
     fn parse_func_def(&mut self) -> Result<Stmt, ParseError> {
@@ -187,7 +248,34 @@ impl Parser {
     }
 
     fn parse_expression(&mut self) -> Result<Expr, ParseError> {
-        self.parse_comparison()
+        self.parse_assignment()
+    }
+
+    fn parse_assignment(&mut self) -> Result<Expr, ParseError> {
+        let expr = self.parse_comparison()?;
+
+        if self.check(TokenType::Equal) {
+            self.advance();
+            let value = self.parse_assignment()?;
+            
+            match expr {
+                Expr::Identifier(name) => {
+                    return Ok(Expr::Assignment {
+                        name,
+                        value: Box::new(value),
+                    });
+                }
+                _ => {
+                    return Err(ParseError::new(
+                        "Invalid assignment target",
+                        self.current_token().line,
+                        self.current_token().column,
+                    ));
+                }
+            }
+        }
+
+        Ok(expr)
     }
 
     fn parse_comparison(&mut self) -> Result<Expr, ParseError> {
@@ -441,10 +529,11 @@ impl Parser {
 
 fn token_type_display(token_type: &TokenType) -> &'static str {
     match token_type {
-        TokenType::Let          => "let",
-        TokenType::If           => "if",
-        TokenType::Else         => "else",
-        TokenType::While        => "while",
+        TokenType::Make         => "make",
+        TokenType::Show         => "show",
+        TokenType::When         => "when",
+        TokenType::Otherwise    => "otherwise",
+        TokenType::During       => "during",
         TokenType::For          => "for",
         TokenType::Return       => "return",
         TokenType::Func         => "func",

@@ -1,45 +1,44 @@
 mod token;
 mod lexer;
-mod asm_helpers;
 mod ast;
 mod parser;
+mod interpreter;
 
-
+use std::env;
+use std::fs;
+use std::process;
 use lexer::Lexer;
 use token::TokenType;
+use parser::Parser;
+use interpreter::Interpreter;
 
 fn main(){
-    let source_code = r#"
-        make x = 10
-        make y = x + 5
+    let args: Vec<String> = env::args().collect();
+    
+    if args.len() != 2 {
+        eprintln!("Usage: {} <file.tara>", args[0]);
+        process::exit(1);
+    }
 
-        show("Hello Tara!")
-        show(x + y)
+    let filename = &args[1];
 
-        when (x > 5) {
-            show("x is big")
-        } otherwise {
-            show("x is small")
+    // Check if file has .tara extension
+    if !filename.ends_with(".tara") {
+        eprintln!("Error: File must have .tara extension");
+        process::exit(1);
+    }
+
+    // Read the source code from file
+    let source_code = match fs::read_to_string(filename) {
+        Ok(content) => content,
+        Err(err) => {
+            eprintln!("Error reading file '{}': {}", filename, err);
+            process::exit(1);
         }
+    };
 
-        make i = 0
-        during (i < 3) {
-            show(i)
-            make i = i + 1
-        }
-
-        for (make j = 0; j < 5; j = j + 1) {
-            show(j)
-        }
-
-        make total = (
-            1 + 2 +
-            3 + 4
-        )
-        show(total)
-    "#;
-
-    let mut lexer = Lexer::new(source_code);
+    // Tokenize
+    let mut lexer = Lexer::new(&source_code);
     let mut tokens = Vec::new();
 
     loop {
@@ -51,7 +50,17 @@ fn main(){
         }
     }
 
-    let mut parser = parser::Parser::new(tokens);
-    let program = parser.parse_program().unwrap();
-    println!("{:#?}", program);
+    // Parse
+    let mut parser = Parser::new(tokens);
+    let program = match parser.parse_program() {
+        Ok(prog) => prog,
+        Err(err) => {
+            eprintln!("Parse error: {}", err);
+            process::exit(1);
+        }
+    };
+
+    // Interpret
+    let mut interpreter = Interpreter::new();
+    interpreter.interpret(&program);
 }

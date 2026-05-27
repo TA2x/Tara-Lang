@@ -4,6 +4,7 @@ pub enum Expr {
     Integer(i64),
     Float(f64),
     String(String),
+    Boolean(bool),
     Identifier(String),
 
     Assignment {

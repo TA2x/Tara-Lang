@@ -391,6 +391,15 @@ impl Parser {
                 }
             }
 
+            TokenType::Boolean(_) => {
+                let consumed_token = self.advance().unwrap();
+                if let TokenType::Boolean(bool_value) = consumed_token.token_type {
+                    Ok(Expr::Boolean(bool_value))
+                } else {
+                    unreachable!("peek guaranteed Boolean variant")
+                }
+            }
+
             TokenType::String(_) => {
                 let consumed_token = self.advance().unwrap();
                 if let TokenType::String(string_value) = consumed_token.token_type {

@@ -1,0 +1,67 @@
+# demo for Tara
+show("===========================") # print
+show("     Welcome to Tara!     ")
+show("===========================\n")
+
+show("Countdown: ")
+make n = 5
+during ( n > 0) { # while loop
+    show(n)
+    make n = n - 1
+}
+
+show("\nSum of 1 to 10: ")
+make sum = 0
+for (make i = 1; i < 11; i = i + 1) { # for loop
+    make sum = sum + i
+}
+show(sum)
+
+show("\nMultiples of 3(up to 30): ")
+for (make i = 1; i < 11; i = i + 1){
+    make result = 3 * i
+    show(result)
+}
+
+show("\nEven or Odd (1 to 8): ")
+for (make k = 1; k < 9; k = k + 1) {
+    make rem = k - (k / 2 * 2)
+    show(k)
+    when (rem == 0) { # if statement
+        show("Even")
+    }
+    otherwise { # else statement
+        show("Odd")
+    }
+}
+
+show("\n2x2 mini times table:")
+for (make a = 1; a < 3; a = a + 1) {
+    for (make b = 1; b < 3; b = b + 1) {
+        make cell = a * b
+        show(cell)
+    }
+}
+
+show("\nBig sum (multi-line expression):")
+make total = (
+    100 + 200 +
+    300 + 400 +
+    500
+)
+show(total)
+
+show("\nFibonacci sequence (10 terms):")
+make fa = 0
+make fb = 1
+make step = 0
+during (step < 10) {
+    show(fa)
+    make fc = fa + fb
+    make fa = fb
+    make fb = fc
+    make step = step + 1
+}
+
+show("")
+show("Done!")

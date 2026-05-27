@@ -1,5 +1,4 @@
-use crate::{asm_helpers::{is_digit_asm, is_alpha_asm}, token::{Token, TokenType}};
-
+use crate::token::{Token, TokenType::{self, Unknown}};
 pub struct Lexer<'a> {
     #[allow(dead_code)]
     source: &'a str, //full source code as a string **borrowed**
@@ -31,12 +30,13 @@ impl<'a> Lexer<'a> {
 
             Some('"') => self.scan_string(),
 
+            Some('#') => {
+                self.skip_line_comment();
+                return self.next_token();
+            }
+            
             Some('/') => {
                 self.advance();
-                if self.peek() == Some('/') {
-                    self.skip_line_comment();
-                    return self.next_token(); // Skip comment and get next token
-                }
                 TokenType::Slash
             }
 
@@ -116,8 +116,8 @@ impl<'a> Lexer<'a> {
                     TokenType::Greater
                 }
             }
-            Some(ch) if is_digit_asm(ch) => self.scan_number(),
-            Some(ch) if is_alpha_asm(ch) => self.scan_identifier_or_keyword(),
+            Some(ch) if ch.is_ascii_digit() => self.scan_number(),
+            Some(ch) if ch.is_ascii_alphabetic() => self.scan_identifier_or_keyword(),
             Some(ch) => {
                 self.advance();
                 TokenType::Unknown(ch)
@@ -138,15 +138,15 @@ impl<'a> Lexer<'a> {
     fn scan_number(&mut self) -> TokenType {
         let start = self.cursor;
         
-        while self.peek().map_or(false, is_digit_asm){
+        while self.peek().map_or(false, |ch| ch.is_ascii_digit()){
             self.advance();
         }
 
-        let is_float = self.peek() == Some('.') && self.peek_next().map_or(false, is_digit_asm);
+        let is_float = self.peek() == Some('.') && self.peek_next().map_or(false, |ch| ch.is_ascii_digit());
 
         if is_float {
             self.advance(); // consume '.'
-            while self.peek().map_or(false, is_digit_asm){
+            while self.peek().map_or(false, |ch| ch.is_ascii_digit()){
                 self.advance();
             }
             let text: String = self.char_list[start..self.cursor].iter().collect();
@@ -161,7 +161,7 @@ impl<'a> Lexer<'a> {
 
     fn scan_identifier_or_keyword(&mut self) -> TokenType {
         let start = self.cursor;
-        while self.peek().map_or(false, |ch| is_alpha_asm(ch) || is_digit_asm(ch) || ch == '_') {
+        while self.peek().map_or(false, |ch| ch.is_ascii_alphabetic() || ch.is_ascii_digit() || ch == '_') {
             self.advance();
         }
 
@@ -176,25 +176,46 @@ impl<'a> Lexer<'a> {
             "for" => TokenType::For,
             "return" => TokenType::Return,
             "func" => TokenType::Func,
+            "true" => TokenType::Boolean(true),
+            "false" => TokenType::Boolean(false),
             _ => TokenType::Identifier(word),
         }
     }
 
     fn scan_string(&mut self) -> TokenType {
         self.advance(); // consume opening quote
-        let start = self.cursor;
+        
+        let mut string_content = String::new();
         
         while let Some(ch) = self.peek() {
             if ch == '"' {
-                let string_content: String = self.char_list[start..self.cursor].iter().collect();
                 self.advance(); // consume closing quote
                 return TokenType::String(string_content);
             }
-            self.advance();
+
+            if ch == '\\' {
+                self.advance();
+                match self.peek() {
+                    Some('n') => { self.advance(); string_content.push('\n');}
+                    Some('t') => { self.advance(); string_content.push('\t'); }
+                    Some('r') => { self.advance(); string_content.push('\r'); }
+                    Some('\\') => { self.advance(); string_content.push('\\'); }
+                    Some('"') => { self.advance(); string_content.push('"');  }
+
+                    Some(unknown) => {
+                        string_content.push('\\');
+                        string_content.push(unknown);
+                        self.advance();
+                    }
+                    None => break, // end of file after backslash
+                }
+            } else {
+                string_content.push(ch);
+                self.advance();
+            }
         }
         
         // Unterminated string - return what we have as a string
-        let string_content: String = self.char_list[start..self.cursor].iter().collect();
         TokenType::String(string_content)
     }
 
@@ -244,6 +265,7 @@ fn token_type_to_lexeme(token_type: &TokenType, _char_list: &[char], _cursor: us
     match token_type {
         TokenType::Integer(n)    => n.to_string(),
         TokenType::Float(f)      => f.to_string(),
+        TokenType::Boolean(b)    => b.to_string(),
         TokenType::String(s)     => format!("\"{}\"", s),
         TokenType::Identifier(s) => s.clone(),
         TokenType::Make          => "make".to_string(),

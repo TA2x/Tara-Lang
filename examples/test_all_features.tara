@@ -1,0 +1,132 @@
+# Tara-Lang Test Suite - All Features Demonstrated
+
+# ===== SECTION 1: VARIABLES & TYPES =====
+show("=== VARIABLES & TYPES ===")
+
+make int_var = 42
+make float_var = 3.14159
+make string_var = "Hello, Tara!"
+make bool_true = true
+make bool_false = false
+
+show(int_var)
+show(float_var)
+show(string_var)
+show(bool_true)
+show(bool_false)
+
+# ===== SECTION 2: ARITHMETIC =====
+show("=== ARITHMETIC ===")
+
+make a = 10
+make b = 3
+
+show(a + b)
+show(a - b)
+show(a * b)
+show(a / b)
+show(a + b * 2)
+show((a + b) * 2)
+
+# ===== SECTION 3: COMPARISON =====
+show("=== COMPARISON ===")
+
+when (10 > 5) {
+    show("10 > 5: true")
+}
+
+when (10 < 5) {
+    show("10 < 5: false")
+} otherwise {
+    show("10 < 5: false")
+}
+
+when (10 == 10) {
+    show("10 == 10: true")
+}
+
+when (10 != 5) {
+    show("10 != 5: true")
+}
+
+# ===== SECTION 4: CONDITIONALS =====
+show("=== CONDITIONALS ===")
+
+make score = 85
+when (score >= 90) {
+    show("Grade: A")
+} otherwise {
+    when (score >= 80) {
+        show("Grade: B")
+    } otherwise {
+        when (score >= 70) {
+            show("Grade: C")
+        } otherwise {
+            show("Grade: F")
+        }
+    }
+}
+
+# ===== SECTION 5: LOOPS - DURING =====
+show("=== LOOPS - DURING ===")
+
+make counter = 1
+during (counter <= 3) {
+    show(counter)
+    make counter = counter + 1
+}
+
+# ===== SECTION 6: LOOPS - FOR =====
+show("=== LOOPS - FOR ===")
+
+for (make i = 0; i < 3; i = i + 1) {
+    show(i)
+}
+
+# ===== SECTION 7: NESTED LOOPS =====
+show("=== NESTED LOOPS ===")
+
+for (make i = 1; i <= 2; i = i + 1) {
+    for (make j = 1; j <= 2; j = j + 1) {
+        show(i * 10 + j)
+    }
+}
+
+# ===== SECTION 8: COMPLEX EXPRESSIONS =====
+show("=== COMPLEX EXPRESSIONS ===")
+
+make result = (5 + 3) * 2 - 1
+show(result)
+
+make mixed = (10 + 5) * 2
+show(mixed)
+
+# ===== SECTION 9: BOOLEAN LOGIC =====
+show("=== BOOLEAN LOGIC ===")
+
+make active = true
+when (!active) {
+    show("Not active")
+} otherwise {
+    show("Active")
+}
+
+# ===== SECTION 10: VARIABLE REASSIGNMENT =====
+show("=== VARIABLE REASSIGNMENT ===")
+
+make x = 10
+show(x)
+make x = 20
+show(x)
+make x = x + 15
+show(x)
+
+# ===== SECTION 11: MULTIPLE SHOW ARGS =====
+show("=== MULTIPLE ARGUMENTS ===")
+
+show(1)
+show(2)
+show(3)
+
+# ===== FINAL MESSAGE =====
+show("=== ALL TESTS COMPLETE ===")

@@ -1,3 +1,13 @@
+#[derive(Debug, Clone, PartialEq)]
+#[allow(dead_code)]
+pub enum TypeAnnotation {
+    Int,
+    Float,
+    Bool,
+    Str,
+    Void,
+}
+
 #[derive(Debug, Clone)]
 #[allow(dead_code)]
 pub enum Expr {
@@ -23,12 +33,12 @@ pub enum Expr {
         operand: Box<Expr>,
     },
 
-    Grouped(Box<Expr>), // For expressions in parentheses
+    Grouped(Box<Expr>),
 
     Call {
         callee: String,
         arguments: Vec<Expr>,
-    }
+    },
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -38,7 +48,6 @@ pub enum BinaryOperator {
     Subtract,
     Multiply,
     Divide,
-
     Equal,
     DoubleEqual,
     NotEqual,
@@ -51,8 +60,8 @@ pub enum BinaryOperator {
 #[derive(Debug, Clone, PartialEq)]
 #[allow(dead_code)]
 pub enum UnaryOperator {
-    Negate, // For unary minus (arithmetic negation)
-    Not,    // For logical NOT (boolean negation)
+    Negate,
+    Not,
 }
 
 #[derive(Debug, Clone)]
@@ -91,7 +100,8 @@ pub enum Stmt {
 
     FuncDef {
         name: String,
-        parameters: Vec<String>,
+        return_type: TypeAnnotation,
+        parameters: Vec<(String, TypeAnnotation)>,
         body: Vec<Stmt>,
     },
 
@@ -105,8 +115,6 @@ pub struct Program {
 
 impl Program {
     pub fn new() -> Self {
-        Self {
-            statements: Vec::new(),
-        }
+        Self { statements: Vec::new() }
     }
 }

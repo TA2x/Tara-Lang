@@ -1,0 +1,80 @@
+# Tara-Lang Comprehensive Example
+# This demonstrates all major features of the language
+
+# === Variables ===
+make message = "Welcome to Tara-Lang!"
+show(message)
+
+# === Arithmetic ===
+make a = 10
+make b = 20
+make sum = a + b
+make product = a * b
+show(sum)
+show(product)
+
+# === Floats ===
+make pi = 3.14159
+make radius = 5
+make area = pi * radius * radius
+show(area)
+
+# === Conditionals (when/otherwise) ===
+make age = 25
+when (age >= 18) {
+    show("You are an adult")
+} otherwise {
+    show("You are a minor")
+}
+
+# === Loops ===
+
+# While loop with during
+show("Counting with during:")
+make counter = 0
+during (counter < 3) {
+    show(counter)
+    make counter = counter + 1
+}
+
+# For loop
+show("Counting with for:")
+for (make i = 0; i < 3; i = i + 1) {
+    show(i)
+}
+
+# === Boolean Values ===
+make is_learning = true
+make is_tired = false
+show(is_learning)
+show(is_tired)
+
+# === Comparisons ===
+make x = 15
+when (x > 10) {
+    show("x is greater than 10")
+}
+
+when (x == 15) {
+    show("x equals 15")
+}
+
+# === String Concatenation ===
+make greeting = "Hello"
+make name = "Tara"
+make full_message = greeting
+show(full_message)
+
+# === Nested Control Flow ===
+make level = 2
+when (level > 0) {
+    when (level > 1) {
+        show("Level is greater than 1")
+    }
+}
+
+# === Complex Expressions ===
+make result = (5 + 3) * (10 - 2)
+show(result)
+
+show("=== Program Complete ===")

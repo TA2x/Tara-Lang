@@ -1,27 +1,16 @@
-# Tara code
-
-show("Hello Tara!")
-
-func void HelloWorld() {
-    show("Hello Wrold!")
-}
-
-func int add(x: int, y: int) {
-    return x + y
-}
+# Tara example program - no semicolons required!
 
 make x = 10
+make y = x + 5
+
+show("Hello Tara!")
+show(x + y)
 
 when (x > 5) {
     show("x is big")
 } otherwise {
     show("x is small")
 }
-
-show("functions testing")
-
-HelloWorld()
-show(add(5, 10), "\n")
 
 make i = 0
 during (i < 3) {
@@ -39,5 +28,8 @@ make total = (
 )
 show(total)
 
-make hi = 2
-show("Hi ", hi, " Welcome")
+# Test with booleans
+make is_true = true
+make is_false = false
+show(is_true)
+show(is_false)

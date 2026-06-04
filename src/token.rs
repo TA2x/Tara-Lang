@@ -5,7 +5,7 @@ pub enum TokenType {
     Float(f64),
     String(String),
     Boolean(bool),
-    // keywords
+
     Make,
     Show,
     When,
@@ -14,6 +14,12 @@ pub enum TokenType {
     For,
     Return,
     Func,
+
+    TypeInt,
+    TypeFloat,
+    TypeBool,
+    TypeString,
+    TypeVoid,
 
     Plus,
     Minus,
@@ -43,18 +49,13 @@ pub enum TokenType {
 #[derive(Debug, Clone)]
 pub struct Token {
     pub token_type: TokenType,
-    pub lexeme: String,// The exact text slice from the source that produced this token.
-    pub line: usize,// Line number in the source (1-based), useful for error messages.
-    pub column: usize,// Column number in the source (1-based).
+    pub lexeme: String,
+    pub line: usize,
+    pub column: usize,
 }
 
 impl Token {
     pub fn new(token_type: TokenType, lexeme: String, line: usize, column: usize) -> Self {
-        Self {
-            token_type,
-            lexeme,
-            line,
-            column,
-        }
+        Self { token_type, lexeme, line, column }
     }
 }

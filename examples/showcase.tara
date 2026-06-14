@@ -94,9 +94,10 @@ for (make i = 0; i < 3; i = i + 1) {
 show("")
 show("8. NESTED STRUCTURES")
 for (make i = 1; i <= 2; i = i + 1) {
-    during (i > 0) {
-        show(i)
-        make i = i - 1
+    make inner = i
+    during (inner > 0) {
+        show(inner)
+        make inner = inner - 1
     }
 }
 

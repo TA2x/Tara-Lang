@@ -1,0 +1,105 @@
+# Tara function test program
+# Covers typed functions, untyped functions, zero/multiple arguments,
+# return values, no-return functions, nested calls, early returns, locals,
+# recursion, strings, booleans, ints, and floats.
+
+func void check(label: String, actual, expected) {
+    when (actual == expected) {
+        show("PASS: " + label)
+    } otherwise {
+        show("FAIL: " + label)
+    }
+}
+
+func void banner() {
+    show("=== Tara Function Tests ===")
+}
+
+func void print_message(message: String) {
+    show(message)
+}
+
+func int add(a: int, b: int) {
+    return a + b
+}
+
+func int subtract(a: int, b: int) {
+    return a - b
+}
+
+func int multiply(a: int, b: int) {
+    return a * b
+}
+
+func int divide(a: int, b: int) {
+    return a / b
+}
+
+func float average(a: float, b: float) {
+    return (a + b) / 2.0
+}
+
+func bool is_even(n: int) {
+    make remainder = n - (n / 2 * 2)
+    return remainder == 0
+}
+
+func String join_words(left: String, right: String) {
+    return left + right
+}
+
+func int local_scope(seed: int) {
+    make temp = seed + 10
+    make temp = temp * 2
+    return temp
+}
+
+func String classify(n: int) {
+    when (n > 0) {
+        return "positive"
+    }
+    when (n == 0) {
+        return "zero"
+    }
+    return "negative"
+}
+
+func no_explicit_return() {
+    make hidden = 123
+}
+
+func identity(value) {
+    return value
+}
+
+func int factorial(n: int) {
+    when (n <= 1) {
+        return 1
+    }
+    return n * factorial(n - 1)
+}
+
+banner()
+print_message("Running function checks...")
+
+check("zero-arg void function returns nil", banner(), nil)
+check("one-arg void function returns nil", print_message("message from function"), nil)
+check("integer add", add(2, 3), 5)
+check("integer subtract", subtract(10, 4), 6)
+check("integer multiply", multiply(6, 7), 42)
+check("integer divide", divide(20, 5), 4)
+check("float average", average(2.0, 4.0), 3.0)
+check("boolean true return", is_even(8), true)
+check("boolean false return", is_even(7), false)
+check("string return", join_words("Hello, ", "Tara"), "Hello, Tara")
+check("nested function calls", add(add(1, 2), multiply(3, 4)), 15)
+check("local variables inside function", local_scope(5), 30)
+check("early return positive", classify(3), "positive")
+check("early return zero", classify(0), "zero")
+check("fallback return negative", classify(-3), "negative")
+check("implicit nil return", no_explicit_return(), nil)
+check("untyped identity int", identity(99), 99)
+check("untyped identity string", identity("same"), "same")
+check("recursive factorial", factorial(5), 120)
+
+show("=== Function Tests Complete ===")

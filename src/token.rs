@@ -1,11 +1,16 @@
+use std::fmt;
+
 #[derive(Debug, Clone, PartialEq)]
-pub enum TokenType {
-    Identifier(String),
+pub enum TokenKind {
+    // Literals
     Integer(i64),
     Float(f64),
-    String(String),
     Boolean(bool),
+    Nil,
+    StringLit(String),
+    Identifier(String),
 
+    // Keywords
     Make,
     Show,
     When,
@@ -15,25 +20,30 @@ pub enum TokenType {
     Return,
     Func,
 
+    // Type names used by function declarations
     TypeInt,
     TypeFloat,
     TypeBool,
     TypeString,
     TypeVoid,
 
+    // Arithmetic
     Plus,
     Minus,
     Star,
     Slash,
+
+    // Assignment / comparison / logical
     Equal,
     DoubleEqual,
     NotEqual,
     Not,
     Less,
-    Greater,
     LessEqual,
+    Greater,
     GreaterEqual,
 
+    // Delimiters
     LeftParen,
     RightParen,
     LeftBrace,
@@ -42,20 +52,78 @@ pub enum TokenType {
     Colon,
     Comma,
 
-    EOF,
+    Eof,
     Unknown(char),
 }
 
-#[derive(Debug, Clone)]
+impl TokenKind {
+    pub fn display(&self) -> String {
+        match self {
+            TokenKind::Integer(n) => n.to_string(),
+            TokenKind::Float(f) => f.to_string(),
+            TokenKind::Boolean(b) => b.to_string(),
+            TokenKind::Nil => "nil".into(),
+            TokenKind::StringLit(s) => format!("\"{}\"", s),
+            TokenKind::Identifier(s) => s.clone(),
+            TokenKind::Make => "make".into(),
+            TokenKind::Show => "show".into(),
+            TokenKind::When => "when".into(),
+            TokenKind::Otherwise => "otherwise".into(),
+            TokenKind::During => "during".into(),
+            TokenKind::For => "for".into(),
+            TokenKind::Return => "return".into(),
+            TokenKind::Func => "func".into(),
+            TokenKind::TypeInt => "int".into(),
+            TokenKind::TypeFloat => "float".into(),
+            TokenKind::TypeBool => "bool".into(),
+            TokenKind::TypeString => "String".into(),
+            TokenKind::TypeVoid => "void".into(),
+            TokenKind::Plus => "+".into(),
+            TokenKind::Minus => "-".into(),
+            TokenKind::Star => "*".into(),
+            TokenKind::Slash => "/".into(),
+            TokenKind::Equal => "=".into(),
+            TokenKind::DoubleEqual => "==".into(),
+            TokenKind::Not => "!".into(),
+            TokenKind::NotEqual => "!=".into(),
+            TokenKind::Less => "<".into(),
+            TokenKind::LessEqual => "<=".into(),
+            TokenKind::Greater => ">".into(),
+            TokenKind::GreaterEqual => ">=".into(),
+            TokenKind::LeftParen => "(".into(),
+            TokenKind::RightParen => ")".into(),
+            TokenKind::LeftBrace => "{".into(),
+            TokenKind::RightBrace => "}".into(),
+            TokenKind::Semicolon => ";".into(),
+            TokenKind::Colon => ":".into(),
+            TokenKind::Comma => ",".into(),
+            TokenKind::Eof => "<EOF>".into(),
+            TokenKind::Unknown(c) => c.to_string(),
+        }
+    }
+}
+
+impl fmt::Display for TokenKind {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", self.display())
+    }
+}
+
+#[derive(Debug, Clone, PartialEq)]
 pub struct Token {
-    pub token_type: TokenType,
+    pub kind: TokenKind,
     pub lexeme: String,
     pub line: usize,
-    pub column: usize,
+    pub col: usize,
 }
 
 impl Token {
-    pub fn new(token_type: TokenType, lexeme: String, line: usize, column: usize) -> Self {
-        Self { token_type, lexeme, line, column }
+    pub fn new(kind: TokenKind, lexeme: String, line: usize, col: usize) -> Self {
+        Self {
+            kind,
+            lexeme,
+            line,
+            col,
+        }
     }
 }

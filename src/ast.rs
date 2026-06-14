@@ -1,5 +1,4 @@
 #[derive(Debug, Clone, PartialEq)]
-#[allow(dead_code)]
 pub enum TypeAnnotation {
     Int,
     Float,
@@ -8,13 +7,13 @@ pub enum TypeAnnotation {
     Void,
 }
 
-#[derive(Debug, Clone)]
-#[allow(dead_code)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum Expr {
     Integer(i64),
     Float(f64),
-    String(String),
+    StringLit(String),
     Boolean(bool),
+    Nil,
     Identifier(String),
 
     Assignment {
@@ -23,13 +22,13 @@ pub enum Expr {
     },
 
     BinaryOp {
-        left_operand: Box<Expr>,
-        operator: BinaryOperator,
-        right_operand: Box<Expr>,
+        left: Box<Expr>,
+        op: BinOp,
+        right: Box<Expr>,
     },
 
     UnaryOp {
-        operator: UnaryOperator,
+        op: UnOp,
         operand: Box<Expr>,
     },
 
@@ -37,43 +36,39 @@ pub enum Expr {
 
     Call {
         callee: String,
-        arguments: Vec<Expr>,
+        args: Vec<Expr>,
     },
 }
 
 #[derive(Debug, Clone, PartialEq)]
-#[allow(dead_code)]
-pub enum BinaryOperator {
+pub enum BinOp {
     Add,
-    Subtract,
-    Multiply,
-    Divide,
-    Equal,
-    DoubleEqual,
-    NotEqual,
-    Less,
-    Greater,
-    LessEqual,
-    GreaterEqual,
+    Sub,
+    Mul,
+    Div,
+    Eq,
+    NotEq,
+    Lt,
+    LtEq,
+    Gt,
+    GtEq,
 }
 
 #[derive(Debug, Clone, PartialEq)]
-#[allow(dead_code)]
-pub enum UnaryOperator {
-    Negate,
+pub enum UnOp {
+    Neg,
     Not,
 }
 
-#[derive(Debug, Clone)]
-#[allow(dead_code)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum Stmt {
     Make {
         name: String,
-        initializer: Expr,
+        init: Expr,
     },
 
     Show {
-        arguments: Vec<Expr>,
+        args: Vec<Expr>,
     },
 
     Return {
@@ -82,8 +77,8 @@ pub enum Stmt {
 
     When {
         condition: Expr,
-        then_branch: Vec<Stmt>,
-        otherwise_branch: Option<Vec<Stmt>>,
+        then_body: Vec<Stmt>,
+        else_body: Option<Vec<Stmt>>,
     },
 
     During {
@@ -100,21 +95,21 @@ pub enum Stmt {
 
     FuncDef {
         name: String,
-        return_type: TypeAnnotation,
-        parameters: Vec<(String, TypeAnnotation)>,
+        return_type: Option<TypeAnnotation>,
+        params: Vec<String>,
         body: Vec<Stmt>,
     },
 
-    ExpressionStmt(Expr),
+    ExprStmt(Expr),
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Program {
-    pub statements: Vec<Stmt>,
+    pub stmts: Vec<Stmt>,
 }
 
 impl Program {
     pub fn new() -> Self {
-        Self { statements: Vec::new() }
+        Self { stmts: Vec::new() }
     }
 }

@@ -249,7 +249,7 @@ impl Parser {
     }
 
     fn parse_assignment(&mut self) -> Result<Expr, ParseError> {
-        let lhs = self.parse_equality_and_comparison()?;
+        let lhs = self.parse_logical_or()?;
 
         if self.check(&TokenKind::Equal) {
             self.advance();
@@ -271,6 +271,50 @@ impl Parser {
         } else {
             Ok(lhs)
         }
+    }
+
+    fn parse_logical_or(&mut self) -> Result<Expr, ParseError> {
+        let mut left = self.parse_logical_and()?;
+        loop {
+            let op = match self.peek_kind() {
+                TokenKind::OrOr | TokenKind::Or => Some(BinOp::LogicalOr),
+                _ => None,
+            };
+            if let Some(op) = op {
+                self.advance();
+                let right = self.parse_logical_and()?;
+                left = Expr::BinaryOp {
+                    left: Box::new(left),
+                    op,
+                    right: Box::new(right),
+                };
+            } else {
+                break;
+            }
+        }
+        Ok(left)
+    }
+
+    fn parse_logical_and(&mut self) -> Result<Expr, ParseError> {
+        let mut left = self.parse_equality_and_comparison()?;
+        loop {
+            let op = match self.peek_kind() {
+                TokenKind::AndAnd | TokenKind::And => Some(BinOp::LogicalAnd),
+                _ => None,
+            };
+            if let Some(op) = op {
+                self.advance();
+                let right = self.parse_equality_and_comparison()?;
+                left = Expr::BinaryOp {
+                    left: Box::new(left),
+                    op,
+                    right: Box::new(right),
+                };
+            } else {
+                break;
+            }
+        }
+        Ok(left)
     }
 
     fn parse_equality_and_comparison(&mut self) -> Result<Expr, ParseError> {
@@ -321,6 +365,7 @@ impl Parser {
             let op = match self.peek_kind() {
                 TokenKind::Star => BinOp::Mul,
                 TokenKind::Slash => BinOp::Div,
+                TokenKind::Percent => BinOp::Mod,
                 _ => break,
             };
             self.advance();
@@ -518,5 +563,30 @@ impl Parser {
 
     fn at_end(&self) -> bool {
         matches!(self.peek_kind(), TokenKind::Eof)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::lexer::Lexer;
+
+    #[test]
+    fn parses_if_else_and_logical_and_modulo_ops() {
+        let source = "make x = 1; if (x < 2) { show(1); } else { show(2); } make y = 5 % 2; make z = true and false; make w = true || false;";
+        let mut lexer = Lexer::new(source);
+        let mut tokens = Vec::new();
+
+        loop {
+            let token = lexer.next_token();
+            tokens.push(token.clone());
+            if token.kind == TokenKind::Eof {
+                break;
+            }
+        }
+
+        let mut parser = Parser::new(tokens);
+        let program = parser.parse_program().expect("program should parse");
+        assert_eq!(program.stmts.len(), 5);
     }
 }

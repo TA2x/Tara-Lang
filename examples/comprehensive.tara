@@ -19,20 +19,20 @@ make radius = 5
 make area = pi * radius * radius
 show(area)
 
-# === Conditionals (when/otherwise) ===
+# === Conditionals (if/else) ===
 make age = 25
-when (age >= 18) {
+if (age >= 18) {
     show("You are an adult")
-} otherwise {
+} else {
     show("You are a minor")
 }
 
 # === Loops ===
 
-# While loop with during
-show("Counting with during:")
+# While loop with while
+show("Counting with while:")
 make counter = 0
-during (counter < 3) {
+while (counter < 3) {
     show(counter)
     make counter = counter + 1
 }
@@ -51,11 +51,11 @@ show(is_tired)
 
 # === Comparisons ===
 make x = 15
-when (x > 10) {
+if (x > 10) {
     show("x is greater than 10")
 }
 
-when (x == 15) {
+if (x == 15) {
     show("x equals 15")
 }
 
@@ -67,8 +67,8 @@ show(full_message)
 
 # === Nested Control Flow ===
 make level = 2
-when (level > 0) {
-    when (level > 1) {
+if (level > 0) {
+    if (level > 1) {
         show("Level is greater than 1")
     }
 }

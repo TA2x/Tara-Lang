@@ -5,7 +5,7 @@ show("===========================\n")
 
 show("Countdown: ")
 make n = 5
-during ( n > 0) { # while loop
+while ( n > 0) { # while loop
     show(n)
     make n = n - 1
 }
@@ -27,10 +27,10 @@ show("\nEven or Odd (1 to 8): ")
 for (make k = 1; k < 9; k = k + 1) {
     make rem = k - (k / 2 * 2)
     show(k)
-    when (rem == 0) { # if statement
+    if (rem == 0) { # if statement
         show("Even")
     }
-    otherwise { # else statement
+    else { # else statement
         show("Odd")
     }
 }
@@ -55,7 +55,7 @@ show("\nFibonacci sequence (10 terms):")
 make fa = 0
 make fb = 1
 make step = 0
-during (step < 10) {
+while (step < 10) {
     show(fa)
     make fc = fa + fb
     make fa = fb

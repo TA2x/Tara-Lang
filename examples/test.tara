@@ -12,9 +12,9 @@ func int add(x: int, y: int) {
 
 make x = 10
 
-when (x > 5) {
+if (x > 5) {
     show("x is big")
-} otherwise {
+} else {
     show("x is small")
 }
 
@@ -24,7 +24,7 @@ HelloWorld()
 show(add(5, 10), "\n")
 
 make i = 0
-during (i < 3) {
+while (i < 3) {
     show(i)
     make i = i + 1
 }

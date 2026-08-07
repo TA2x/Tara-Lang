@@ -266,8 +266,28 @@ impl Interpreter {
 
             Expr::BinaryOp { left, op, right } => {
                 let lhs = self.eval(left)?;
-                let rhs = self.eval(right)?;
-                apply_binop(&lhs, op, &rhs)
+                match op {
+                    BinOp::LogicalAnd => {
+                        if lhs.is_truthy() {
+                            let rhs = self.eval(right)?;
+                            Ok(Value::Bool(rhs.is_truthy()))
+                        } else {
+                            Ok(Value::Bool(false))
+                        }
+                    }
+                    BinOp::LogicalOr => {
+                        if lhs.is_truthy() {
+                            Ok(Value::Bool(true))
+                        } else {
+                            let rhs = self.eval(right)?;
+                            Ok(Value::Bool(rhs.is_truthy()))
+                        }
+                    }
+                    _ => {
+                        let rhs = self.eval(right)?;
+                        apply_binop(&lhs, op, &rhs)
+                    }
+                }
             }
 
             Expr::UnaryOp { op, operand } => {
@@ -338,6 +358,8 @@ fn apply_binop(left: &Value, op: &BinOp, right: &Value) -> Result<Value, String>
             Err("integer division by zero".into())
         }
         (Value::Integer(a), BinOp::Div, Value::Integer(b)) => Ok(Value::Integer(a / b)),
+        (Value::Integer(_), BinOp::Mod, Value::Integer(0)) => Err("modulo by zero".into()),
+        (Value::Integer(a), BinOp::Mod, Value::Integer(b)) => Ok(Value::Integer(a % b)),
 
         (Value::Float(a), BinOp::Add, Value::Float(b)) => Ok(Value::Float(a + b)),
         (Value::Float(a), BinOp::Sub, Value::Float(b)) => Ok(Value::Float(a - b)),
@@ -346,6 +368,10 @@ fn apply_binop(left: &Value, op: &BinOp, right: &Value) -> Result<Value, String>
             Err("float division by zero".into())
         }
         (Value::Float(a), BinOp::Div, Value::Float(b)) => Ok(Value::Float(a / b)),
+        (Value::Float(a), BinOp::Mod, Value::Float(b)) if *b == 0.0 => {
+            Err("modulo by zero".into())
+        }
+        (Value::Float(a), BinOp::Mod, Value::Float(b)) => Ok(Value::Float(a % b)),
 
         (Value::Integer(a), BinOp::Add, Value::Float(b)) => Ok(Value::Float(*a as f64 + b)),
         (Value::Float(a), BinOp::Add, Value::Integer(b)) => Ok(Value::Float(a + *b as f64)),
@@ -359,6 +385,14 @@ fn apply_binop(left: &Value, op: &BinOp, right: &Value) -> Result<Value, String>
         (Value::Integer(a), BinOp::Div, Value::Float(b)) => Ok(Value::Float(*a as f64 / b)),
         (Value::Float(_), BinOp::Div, Value::Integer(0)) => Err("division by zero".into()),
         (Value::Float(a), BinOp::Div, Value::Integer(b)) => Ok(Value::Float(a / *b as f64)),
+        (Value::Integer(a), BinOp::Mod, Value::Float(b)) if *b == 0.0 => {
+            Err("modulo by zero".into())
+        }
+        (Value::Integer(a), BinOp::Mod, Value::Float(b)) => Ok(Value::Float(*a as f64 % b)),
+        (Value::Float(a), BinOp::Mod, Value::Integer(b)) if *b == 0 => {
+            Err("modulo by zero".into())
+        }
+        (Value::Float(a), BinOp::Mod, Value::Integer(b)) => Ok(Value::Float(a % *b as f64)),
 
         (Value::Str(a), BinOp::Add, Value::Str(b)) => Ok(Value::Str(format!("{}{}", a, b))),
 

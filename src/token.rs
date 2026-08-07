@@ -19,6 +19,8 @@ pub enum TokenKind {
     For,
     Return,
     Func,
+    And,
+    Or,
 
     // Type names used by function declarations
     TypeInt,
@@ -32,6 +34,11 @@ pub enum TokenKind {
     Minus,
     Star,
     Slash,
+    Percent,
+
+    // Logical operators
+    AndAnd,
+    OrOr,
 
     // Assignment / comparison / logical
     Equal,
@@ -67,12 +74,14 @@ impl TokenKind {
             TokenKind::Identifier(s) => s.clone(),
             TokenKind::Make => "make".into(),
             TokenKind::Show => "show".into(),
-            TokenKind::When => "when".into(),
-            TokenKind::Otherwise => "otherwise".into(),
-            TokenKind::During => "during".into(),
+            TokenKind::When => "if".into(),
+            TokenKind::Otherwise => "else".into(),
+            TokenKind::During => "while".into(),
             TokenKind::For => "for".into(),
             TokenKind::Return => "return".into(),
             TokenKind::Func => "func".into(),
+            TokenKind::And => "and".into(),
+            TokenKind::Or => "or".into(),
             TokenKind::TypeInt => "int".into(),
             TokenKind::TypeFloat => "float".into(),
             TokenKind::TypeBool => "bool".into(),
@@ -82,6 +91,9 @@ impl TokenKind {
             TokenKind::Minus => "-".into(),
             TokenKind::Star => "*".into(),
             TokenKind::Slash => "/".into(),
+            TokenKind::Percent => "%".into(),
+            TokenKind::AndAnd => "&&".into(),
+            TokenKind::OrOr => "||".into(),
             TokenKind::Equal => "=".into(),
             TokenKind::DoubleEqual => "==".into(),
             TokenKind::Not => "!".into(),

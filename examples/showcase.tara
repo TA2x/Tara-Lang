@@ -53,32 +53,32 @@ show(x / y)
 # Feature 4: Comparisons
 show("")
 show("4. COMPARISON OPERATORS")
-when (x > y) {
+if (x > y) {
     show("10 > 3: true")
 }
-when (x == 10) {
+if (x == 10) {
     show("10 == 10: true")
 }
 
 # Feature 5: Conditionals
 show("")
-show("5. CONDITIONALS (when/otherwise)")
+show("5. CONDITIONALS (if/else)")
 make score = 85
-when (score >= 90) {
+if (score >= 90) {
     show("Grade: A")
-} otherwise {
-    when (score >= 80) {
+} else {
+    if (score >= 80) {
         show("Grade: B")
-    } otherwise {
+    } else {
         show("Grade: C")
     }
 }
 
 # Feature 6: While Loops
 show("")
-show("6. WHILE LOOPS (during)")
+show("6. WHILE LOOPS (while)")
 make count = 0
-during (count < 3) {
+while (count < 3) {
     show(count)
     make count = count + 1
 }
@@ -95,7 +95,7 @@ show("")
 show("8. NESTED STRUCTURES")
 for (make i = 1; i <= 2; i = i + 1) {
     make inner = i
-    during (inner > 0) {
+    while (inner > 0) {
         show(inner)
         make inner = inner - 1
     }
@@ -106,46 +106,7 @@ show("")
 show("9. BOOLEAN LOGIC")
 make flag1 = true
 make flag2 = false
-when (flag1) {
+if (flag1) {
     show("Flag1 is true")
 }
-when (!flag2) {
-    show("Flag2 is NOT false (it is true)")
-}
-
-# Feature 10: Complex Expressions
-show("")
-show("10. COMPLEX EXPRESSIONS")
-make result = (5 + 3) * 2 - (10 / 2)
-show(result)
-
-# Feature 11: Type Coercion
-show("")
-show("11. TYPE COERCION (int + float)")
-make int_val = 10
-make float_val = 2.5
-make mixed_result = int_val + float_val
-show(mixed_result)
-
-# Feature 12: String Operations
-show("")
-show("12. STRING CONCATENATION")
-make greeting = "Hello"
-make target = "Tara"
-make full_greeting = greeting
-show(full_greeting)
-
-# Feature 13: Variable Reassignment
-show("")
-show("13. VARIABLE REASSIGNMENT")
-make counter = 5
-show(counter)
-make counter = counter * 2
-show(counter)
-
-# Final Summary
-show("")
-show("════════════════════════════════════════")
-show("✓ All features working correctly!")
-show("✓ Tara-Lang is ready to use!")
-show("════════════════════════════════════════")
+if (!flag2) {

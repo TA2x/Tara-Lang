@@ -31,21 +31,21 @@ show((a + b) * 2)
 # ===== SECTION 3: COMPARISON =====
 show("=== COMPARISON ===")
 
-when (10 > 5) {
+if (10 > 5) {
     show("10 > 5: true")
 }
 
-when (10 < 5) {
+if (10 < 5) {
     show("10 < 5: false")
-} otherwise {
+} else {
     show("10 < 5: false")
 }
 
-when (10 == 10) {
+if (10 == 10) {
     show("10 == 10: true")
 }
 
-when (10 != 5) {
+if (10 != 5) {
     show("10 != 5: true")
 }
 
@@ -53,25 +53,25 @@ when (10 != 5) {
 show("=== CONDITIONALS ===")
 
 make score = 85
-when (score >= 90) {
+if (score >= 90) {
     show("Grade: A")
-} otherwise {
-    when (score >= 80) {
+} else {
+    if (score >= 80) {
         show("Grade: B")
-    } otherwise {
-        when (score >= 70) {
+    } else {
+        if (score >= 70) {
             show("Grade: C")
-        } otherwise {
+        } else {
             show("Grade: F")
         }
     }
 }
 
-# ===== SECTION 5: LOOPS - DURING =====
-show("=== LOOPS - DURING ===")
+# ===== SECTION 5: LOOPS - WHILE =====
+show("=== LOOPS - WHILE ===")
 
 make counter = 1
-during (counter <= 3) {
+while (counter <= 3) {
     show(counter)
     make counter = counter + 1
 }
@@ -105,9 +105,9 @@ show(mixed)
 show("=== BOOLEAN LOGIC ===")
 
 make active = true
-when (!active) {
+if (!active) {
     show("Not active")
-} otherwise {
+} else {
     show("Active")
 }
 

@@ -4,9 +4,9 @@
 # recursion, strings, booleans, ints, and floats.
 
 func void check(label: String, actual, expected) {
-    when (actual == expected) {
+    if (actual == expected) {
         show("PASS: " + label)
-    } otherwise {
+    } else {
         show("FAIL: " + label)
     }
 }
@@ -55,10 +55,10 @@ func int local_scope(seed: int) {
 }
 
 func String classify(n: int) {
-    when (n > 0) {
+    if (n > 0) {
         return "positive"
     }
-    when (n == 0) {
+    if (n == 0) {
         return "zero"
     }
     return "negative"
@@ -73,7 +73,7 @@ func identity(value) {
 }
 
 func int factorial(n: int) {
-    when (n <= 1) {
+    if (n <= 1) {
         return 1
     }
     return n * factorial(n - 1)

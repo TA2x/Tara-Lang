@@ -51,6 +51,28 @@ impl<'src> Lexer<'src> {
                     self.advance();
                     TokenKind::Slash
                 }
+                Some('%') => {
+                    self.advance();
+                    TokenKind::Percent
+                }
+                Some('&') => {
+                    self.advance();
+                    if self.peek() == Some('&') {
+                        self.advance();
+                        TokenKind::AndAnd
+                    } else {
+                        TokenKind::Unknown('&')
+                    }
+                }
+                Some('|') => {
+                    self.advance();
+                    if self.peek() == Some('|') {
+                        self.advance();
+                        TokenKind::OrOr
+                    } else {
+                        TokenKind::Unknown('|')
+                    }
+                }
                 Some('(') => {
                     self.advance();
                     TokenKind::LeftParen
@@ -167,12 +189,14 @@ impl<'src> Lexer<'src> {
         match word.as_str() {
             "make" => TokenKind::Make,
             "show" => TokenKind::Show,
-            "when" => TokenKind::When,
-            "otherwise" => TokenKind::Otherwise,
-            "during" => TokenKind::During,
+            "if" | "when" => TokenKind::When,
+            "else" | "otherwise" => TokenKind::Otherwise,
+            "while" | "during" => TokenKind::During,
             "for" => TokenKind::For,
             "return" => TokenKind::Return,
             "func" => TokenKind::Func,
+            "and" => TokenKind::And,
+            "or" => TokenKind::Or,
             "true" => TokenKind::Boolean(true),
             "false" => TokenKind::Boolean(false),
             "nil" => TokenKind::Nil,

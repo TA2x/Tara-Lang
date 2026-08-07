@@ -6,14 +6,14 @@ make y = x + 5
 show("Hello Tara!")
 show(x + y)
 
-when (x > 5) {
+if (x > 5) {
     show("x is big")
-} otherwise {
+} else {
     show("x is small")
 }
 
 make i = 0
-during (i < 3) {
+while (i < 3) {
     show(i)
     make i = i + 1
 }
